@@ -54,6 +54,18 @@ func (docTemplate *DocTemplate) Execute(exportPath string, data interface{}) err
 	return err
 }
 
+func (docTemplate *DocTemplate) ExecuteToBytes(exportPath string, data interface{}) ([]byte, error) {
+	buf := new(bytes.Buffer)
+	defer buf.Reset()
+
+	err := docTemplate.Template.Execute(buf, data)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
 // AddFunctions adds functions to the template
 func (docTemplate *DocTemplate) AddFunctions(funcMap template.FuncMap) {
 	docTemplate.Template = docTemplate.Template.Funcs(funcMap)
