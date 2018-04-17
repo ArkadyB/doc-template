@@ -54,7 +54,7 @@ func (docTemplate *DocTemplate) Execute(exportPath string, data interface{}) err
 	return err
 }
 
-func (docTemplate *DocTemplate) ExecuteToBytes(exportPath string, data interface{}) ([]byte, error) {
+func (docTemplate *DocTemplate) ExecuteToBytes(data interface{}) ([]byte, error) {
 	buf := new(bytes.Buffer)
 	defer buf.Reset()
 
@@ -63,6 +63,7 @@ func (docTemplate *DocTemplate) ExecuteToBytes(exportPath string, data interface
 		log.Println(err)
 		return nil, err
 	}
+
 	return buf.Bytes(), nil
 }
 
