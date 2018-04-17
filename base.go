@@ -12,6 +12,7 @@ import (
 
 // Document interface is a combintation of methods use for generic data files
 type Document interface {
+	LoadFileFromBase64(b64 string) error
 	ReadFile(string) error
 	UpdateContent(string)
 	GetContent() string
@@ -26,6 +27,15 @@ type DocTemplate struct {
 	Document Document
 }
 
+func GetTemplateFromBase64(b64 string) (*DocTemplate, error) {
+	var document Document
+	err := document.LoadFileFromBase64(b64)
+	if err != nil {
+		return nil, err
+	}
+	return &DocTemplate{Document: document, Template: template.New("docTemp")}, nil
+}
+
 // GetTemplate uses the file extension to determin the correct document struct to use
 func GetTemplate(filePath string) (*DocTemplate, error) {
 	var document Document
@@ -35,6 +45,7 @@ func GetTemplate(filePath string) (*DocTemplate, error) {
 	default:
 		return nil, errors.New("Unsupported Document Type")
 	}
+
 	err := document.ReadFile(filePath)
 	if err != nil {
 		return nil, err
@@ -54,7 +65,7 @@ func (docTemplate *DocTemplate) Execute(exportPath string, data interface{}) err
 	return err
 }
 
-func (docTemplate *DocTemplate) ExecuteToBytes(data interface{}) ([]byte, error) {
+func (docTemplate *DocTemplate) ExecuteToBytes(exportPath string, data interface{}) ([]byte, error) {
 	buf := new(bytes.Buffer)
 	defer buf.Reset()
 
@@ -63,7 +74,6 @@ func (docTemplate *DocTemplate) ExecuteToBytes(data interface{}) ([]byte, error)
 		log.Println(err)
 		return nil, err
 	}
-
 	return buf.Bytes(), nil
 }
 
