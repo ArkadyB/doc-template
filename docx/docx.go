@@ -2,16 +2,42 @@ package docx
 
 import (
 	"archive/zip"
+	"encoding/base64"
 	"errors"
 	"io"
 	"log"
 	"os"
+
+	"bytes"
 )
 
 // Docx struct that contains data from a docx
 type Docx struct {
 	zipReader *zip.ReadCloser
 	content   string
+}
+
+func (d *Docx) LoadFileFromBase64(b64 string) error {
+	dec, err := base64.StdEncoding.DecodeString(b64)
+	if err != nil {
+		return err
+	}
+
+	r := bytes.NewReader(dec)
+	reader, err := zip.NewReader(r, int64(len(dec)))
+	if err != nil {
+		return errors.New("Cannot Open File")
+	}
+	content, err := readText(reader.File)
+	if err != nil {
+		return errors.New("Cannot Read File")
+	}
+
+	if content == "" {
+		return errors.New("File has no content")
+	}
+	d.content = cleanText(content)
+	return nil
 }
 
 // ReadFile func reads a docx file
