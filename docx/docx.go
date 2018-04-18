@@ -2,6 +2,7 @@ package docx
 
 import (
 	"archive/zip"
+	"bufio"
 	"encoding/base64"
 	"errors"
 	"io"
@@ -34,6 +35,10 @@ func (d *Docx) LoadFileFromBase64(b64 string) error {
 		log.Println(err.Error())
 		return errors.New("Cannot Read File")
 	}
+
+	closer := new(zip.ReadCloser)
+	closer.File = reader.File
+	d.zipReader = closer
 
 	if content == "" {
 		return errors.New("File has no content")
@@ -86,6 +91,16 @@ func (d *Docx) WriteToFile(path string, data string) error {
 		return err
 	}
 	log.Printf("Exporting data to %s", path)
+	return nil
+}
+
+func (d *Docx) WriteToBytes(buf *bytes.Buffer, data string) error {
+	target := bufio.NewWriter(buf)
+	err := d.write(target, data)
+	if err != nil {
+		return err
+	}
+	log.Printf("Exporting data to bytes")
 	return nil
 }
 
