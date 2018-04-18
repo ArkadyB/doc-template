@@ -26,10 +26,12 @@ func (d *Docx) LoadFileFromBase64(b64 string) error {
 	r := bytes.NewReader(dec)
 	reader, err := zip.NewReader(r, int64(len(dec)))
 	if err != nil {
+		log.Println(err.Error())
 		return errors.New("Cannot Open File")
 	}
 	content, err := readText(reader.File)
 	if err != nil {
+		log.Println(err.Error())
 		return errors.New("Cannot Read File")
 	}
 
@@ -44,10 +46,12 @@ func (d *Docx) LoadFileFromBase64(b64 string) error {
 func (d *Docx) ReadFile(path string) error {
 	reader, err := zip.OpenReader(path)
 	if err != nil {
+		log.Println(err.Error())
 		return errors.New("Cannot Open File")
 	}
 	content, err := readText(reader.File)
 	if err != nil {
+		log.Println(err.Error())
 		return errors.New("Cannot Read File")
 	}
 	d.zipReader = reader
