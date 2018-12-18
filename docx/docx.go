@@ -90,7 +90,6 @@ func (d *Docx) WriteToFile(path string, data string) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("Exporting data to %s", path)
 	return nil
 }
 
@@ -100,7 +99,6 @@ func (d *Docx) WriteToBytes(buf *bytes.Buffer, data string) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("Exporting data to bytes")
 	return nil
 }
 
